@@ -1,0 +1,50 @@
+/* Forms */
+
+.form-group {
+  margin: 1.2rem 0;
+}
+
+.form .form-text {
+  display: block;
+  margin-top: 0.3rem;
+  /* color: #888; */
+  color: rgb(255, 255, 255);
+}
+
+.form input[type="text"],
+.form input[type="email"],
+.form input[type="text"],
+.form input[type="number"],
+.form select,
+.form textarea {
+  display: block;
+  width: 300px;
+  padding: 0.2rem;
+  font-size: 1rem;
+  border: 1px solid #ccc;
+}
+
+.form input[type="submit"],
+button {
+  font: inherit;
+}
+
+.btn {
+  background-color: #083653;
+  color: rgb(34, 32, 32);
+  padding: 0.4rem 1.3rem;
+  font-size: 1rem;
+  border: none;
+  border-radius: 8px;
+  cursor: pointer;
+  margin-right: 0.5rem;
+  margin-top: 1rem;
+  transition: opacity 0.2s ease-in;
+  outline: none;
+  text-align: center;
+  width: 100%;
+}
+
+.btn:hover {
+  opacity: 0.6;
+}
