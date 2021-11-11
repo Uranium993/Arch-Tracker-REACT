@@ -1,13 +1,18 @@
-import axios from "axios";
+import api from "./api";
 
-const setAuthToken = (token) => {
+export const setAuthToken = (token, editorName) => {
   if (token) {
-    axios.defaults.headers.common["x-auth-token"] = token;
+    api.defaults.headers.common["x-auth-token"] = token;
     localStorage.setItem("token", token);
+    localStorage.setItem("editorName", editorName);
   } else {
-    delete axios.defaults.headers.common["x-auth-token"];
+    delete api.defaults.headers.common["x-auth-token"];
     localStorage.removeItem("token");
   }
 };
 
-export default setAuthToken;
+export const checkAdmin = async () => {
+  const res = await api.get("/auth");
+
+  return res;
+};

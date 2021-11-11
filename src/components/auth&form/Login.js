@@ -1,23 +1,33 @@
-import React from "react";
+import React, { useContext } from "react";
 import { Link, Redirect } from "react-router-dom";
 import { login } from "../../actions/auth";
 import { useForm } from "react-hook-form";
+import { UserContext } from "../../actions/UserContext";
 
-const Login = ({ isAuthenticated }) => {
+const Login = ({ token }) => {
   const { register, handleSubmit, reset } = useForm();
 
+  const { value, setValue } = useContext(UserContext);
+
   const onSubmit = async (data) => {
-    await login(data);
+    let response = await login(data);
+
+    await setValue({ ...value, editor: true, error: response.msg });
+
     reset();
   };
 
   //Redirect if logged in
-  if (isAuthenticated) {
+  if (token === true) {
     return <Redirect to="/dashboard" />;
   }
 
   return (
     <div className="container2">
+      {value.error ? (
+        <h3 style={{ color: "red" }}>Invalid Credentials</h3>
+      ) : null}
+
       <h1 className="large text-primary">Sign In</h1>
       <p className="lead">
         <i className="fas fa-user"></i> Sign Into Your Account

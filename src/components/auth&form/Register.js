@@ -2,17 +2,15 @@ import React from "react";
 import { Link, Redirect } from "react-router-dom";
 import { registerEditor } from "../../actions/auth";
 import { useForm } from "react-hook-form";
-import { QueryCache, QueryClient, useMutation } from "react-query";
+import { useMutation } from "react-query";
 import "./forms.css";
 
 const Register = ({ isAuthenticated, role }) => {
   const { register, handleSubmit, reset } = useForm();
 
-  const client = new QueryCache();
-
-  console.log(client.getAll());
-
-  const mutation = useMutation((data) => registerEditor(data));
+  const mutation = useMutation((data) => registerEditor(data), {
+    onSuccess: () => {},
+  });
 
   const onSubmit = async (data) => {
     data.role = role;

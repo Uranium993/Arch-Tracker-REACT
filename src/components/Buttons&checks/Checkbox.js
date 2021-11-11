@@ -2,7 +2,7 @@ import React from "react";
 import PropTypes from "prop-types";
 
 const Checkbox = ({
-  type = "checkbox",
+  // type = "checkbox",
   name,
   checked = Boolean,
   value,
@@ -10,7 +10,7 @@ const Checkbox = ({
 }) => (
   <div style={{ display: "flex", alignItems: "center" }}>
     <input
-      type={type}
+      type="checkbox"
       name={name}
       checked={checked}
       value={value}
@@ -20,7 +20,7 @@ const Checkbox = ({
 );
 
 Checkbox.propTypes = {
-  type: PropTypes.string,
+  // type: PropTypes.string,
   name: PropTypes.string.isRequired,
   checked: PropTypes.bool,
   //   onChange: PropTypes.func.isRequired,

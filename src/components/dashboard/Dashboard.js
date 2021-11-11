@@ -1,6 +1,5 @@
 import React, { useState } from "react";
 import ProjectContainer from "./ProjectContainer";
-import { testData } from "./data";
 import "antd/dist/antd.css";
 import "../../index.css";
 import { Layout, Menu } from "antd";
@@ -8,9 +7,10 @@ import { LaptopOutlined } from "@ant-design/icons";
 import { Tabs } from "antd";
 import Page from "./Charts";
 import Modal from "../modal/Modal";
-
 import "./ant.module.css";
 import AddProjectBtn from "../Buttons&checks/AddProjectBtn";
+import { useQuery } from "react-query";
+import { getProjects } from "../../actions/queryProjects";
 
 const { TabPane } = Tabs;
 
@@ -18,6 +18,11 @@ const { SubMenu } = Menu;
 const { Header, Content, Sider } = Layout;
 
 const Dashboard = () => {
+  //Fetch projects (axios)
+  const queryInfo = useQuery("projects", async () => await getProjects(), {
+    refetchOnWindowFocus: false,
+  });
+
   const [searchTerm, setSearchTerm] = useState("");
 
   const [showModal, setShowModal] = useState(false);
@@ -74,14 +79,7 @@ const Dashboard = () => {
                         backgroundColor: "#121212",
                       }}
                     >
-                      <Content
-                        className="site-layout-background"
-                        // style={{
-                        //   padding: 24,
-                        //   margin: 0,
-                        //   minHeight: 280,
-                        // }}
-                      >
+                      <Content className="site-layout-background">
                         <div className="top_bar">
                           <AddProjectBtn onClick={openModal} />
                           <input
@@ -94,10 +92,14 @@ const Dashboard = () => {
                           />
                         </div>
 
-                        <ProjectContainer
-                          testData={testData}
-                          searchTerm={searchTerm}
-                        />
+                        {queryInfo.isLoading ? (
+                          "LOADING......"
+                        ) : queryInfo.isSuccess ? (
+                          <ProjectContainer
+                            queryInfo={Array.from(queryInfo.data)}
+                            searchTerm={searchTerm}
+                          />
+                        ) : null}
                       </Content>
                     </Layout>
                   </Layout>
@@ -109,8 +111,9 @@ const Dashboard = () => {
             </Tabs>
           </Menu>
         </Header>
-        <Modal showModal={showModal} setShowModal={setShowModal} />
       </Layout>
+
+      <Modal showModal={showModal} setShowModal={setShowModal} />
     </>
   );
 };

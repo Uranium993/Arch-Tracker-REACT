@@ -1,59 +1,13 @@
 import React from "react";
-import { makeStyles } from "@material-ui/core/styles";
 import Accordion from "@material-ui/core/Accordion";
 import AccordionSummary from "@material-ui/core/AccordionSummary";
 import AccordionDetails from "@material-ui/core/AccordionDetails";
 import Typography from "@material-ui/core/Typography";
 import ExpandMoreIcon from "@material-ui/icons/ExpandMore";
 import CheckboxArr from "../Buttons&checks/CheckboxArr";
+import { useStyles } from "../materialStyles/phaseStyle";
 
-const useStyles = makeStyles((theme) => ({
-  root: (props) => ({
-    fontFamily: "Tahoma",
-    marginRight: "1px",
-    "& #IDR": {
-      backgroundColor: props.color,
-      color: "white",
-    },
-    "& #IDP": {
-      backgroundColor: props.color,
-      color: "white",
-    },
-    "& #PGD": {
-      backgroundColor: props.color,
-      color: "white",
-    },
-    "& #PZI": {
-      backgroundColor: props.color,
-      color: "white",
-    },
-    "& #PIO": {
-      backgroundColor: props.color,
-      color: "white",
-    },
-    "& .MuiAccordionSummary-content": {
-      justifyContent: "center",
-    },
-    "& .MuiAccordionDetails-root": {
-      padding: "0 0 1rem 0",
-      backgroundColor: "black",
-      display: "flex",
-      justifyContent: "center",
-    },
-  }),
-
-  // details: {
-  //   backgroundColor: "white",
-  // },
-
-  heading: {
-    fontSize: theme.typography.pxToRem(15),
-    fontWeight: theme.typography.fontWeightBold,
-    color: "black",
-  },
-}));
-
-function Phase({ phase: { name, color, docs } }) {
+function Phase({ phase: { name, color, docs, _id }, projectID }) {
   const props = { color: color };
 
   const classes = useStyles(props);
@@ -77,7 +31,12 @@ function Phase({ phase: { name, color, docs } }) {
               <Typography className={classes.heading}> {name} </Typography>
             </AccordionSummary>
             <AccordionDetails className={classes.details}>
-              <CheckboxArr docs={docs} />
+              <CheckboxArr
+                docs={docs}
+                id={_id}
+                projectID={projectID}
+                name={name}
+              />
             </AccordionDetails>
           </Accordion>
         </div>

@@ -2,11 +2,11 @@ import React, { useRef, useEffect, useCallback } from "react";
 import { useSpring, animated } from "react-spring";
 import styled from "styled-components";
 import CloseIcon from "@material-ui/icons/Close";
-import AddProjectForm from "./AddProjectForm";
+import AddProjectForm from "../auth&form/AddProjectForm";
 
 const Background = styled.div`
   position: fixed;
-
+  top: 0;
   width: 100vw;
   height: 100vh;
   background: rgba(0, 0, 0, 0.8);
@@ -18,12 +18,12 @@ const Background = styled.div`
 
 const ModalWrapper = styled.div`
   width: 400px;
-  height: 500px;
+  height: 600px;
   box-shadow: 0 5px 16px rgba(0, 0, 0, 0.2);
   background: #9cbce9;
   color: #000;
   display: grid;
-  position: relative;
+
   z-index: 10;
   border-radius: 10px;
 `;
@@ -73,11 +73,14 @@ const Modal = ({ showModal, setShowModal }) => {
     }
   };
 
+  const justClose = () => {
+    setShowModal(false);
+  };
+
   const keyPress = useCallback(
     (e) => {
       if (e.key === "Escape" && showModal) {
         setShowModal(false);
-        console.log("I pressed");
       }
     },
     [setShowModal, showModal]
@@ -95,7 +98,7 @@ const Modal = ({ showModal, setShowModal }) => {
           <animated.div style={animation}>
             <ModalWrapper showModal={showModal}>
               <ModalContent>
-                <AddProjectForm />
+                <AddProjectForm close={justClose} />
               </ModalContent>
               <CloseModalButton
                 aria-label="Close modal"

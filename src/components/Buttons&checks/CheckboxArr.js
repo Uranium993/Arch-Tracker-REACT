@@ -1,15 +1,17 @@
 //Prevent rerenders on accordion click!!!
-
 import React, { useState } from "react";
-// import { addCheckData } from "../../actions/checkForm";
-import Checkbox from "../Buttons&checks/Checkbox";
-// import { Checkbox } from "@material-ui/core";
 import Button from "../Buttons&checks/Button";
+import { useMutation, useQueryClient } from "react-query";
+import { updatePhase } from "../../actions/queryProjects";
+import Checkbox from "../Buttons&checks/Checkbox";
 
-function CheckboxArr({ docs }) {
+function CheckboxArr({ docs, id, projectID, name }) {
+  const queryClient = useQueryClient();
+
   const [checkData, setcheckData] = useState({
-    color: "gray",
-    // form: Math.random() * 10,
+    projectID: projectID,
+    name: name,
+    color: "",
     docs,
   });
 
@@ -29,7 +31,7 @@ function CheckboxArr({ docs }) {
     setcheckData({ ...checkData, docs: newDocs });
   };
 
-  //Horisontal color checks
+  //Horizontal color checks
   const [checkColors, setCheckColors] = useState({
     gray: false,
     blue: false,
@@ -38,14 +40,14 @@ function CheckboxArr({ docs }) {
     purple: false,
   });
 
-  const { gray, blue, orange, green, purple } = checkColors;
+  const { gray, blue, orange, green, red } = checkColors;
 
   const loopKeys = (e) => {
     e.preventDefault();
     let newColorsObj;
 
     for (let keys in checkColors) {
-      newColorsObj = checkColors[keys] = e.target.value === keys.toString();
+      newColorsObj = checkColors[keys] = e.target.name === keys.toString();
     }
 
     setCheckColors({
@@ -54,7 +56,17 @@ function CheckboxArr({ docs }) {
     });
   };
 
-  const onSubmit = (e) => console.log(e.target);
+  const mutation = useMutation((data) => updatePhase(data, projectID, id), {
+    onSuccess: async (data, values) => {
+      queryClient.setQueryData(["project", projectID], data);
+      // queryClient.invalidateQueries(["project", projectID]);
+    },
+  });
+
+  const onSubmit = (e) => {
+    e.preventDefault();
+    mutation.mutate(checkData);
+  };
 
   return (
     <form
@@ -69,10 +81,10 @@ function CheckboxArr({ docs }) {
           name="gray"
           id="gray"
           checked={gray}
-          value={"gray"}
+          value="gray"
           onInput={(e) => loopKeys(e)}
           onChange={(e) => {
-            setcheckData({ ...checkData, color: e.target.name });
+            setcheckData({ ...checkData, color: e.target.value });
           }}
         />
         <input
@@ -80,10 +92,10 @@ function CheckboxArr({ docs }) {
           name="blue"
           id="blue"
           checked={blue}
-          value={"blue"}
+          value="#1890ff"
           onInput={(e) => loopKeys(e)}
           onChange={(e) => {
-            setcheckData({ ...checkData, color: e.target.name });
+            setcheckData({ ...checkData, color: e.target.value });
           }}
         />
         <input
@@ -91,10 +103,10 @@ function CheckboxArr({ docs }) {
           name="orange"
           id="orange"
           checked={orange}
-          value={"orange"}
+          value="#F2C94C"
           onInput={(e) => loopKeys(e)}
           onChange={(e) => {
-            setcheckData({ ...checkData, color: e.target.name });
+            setcheckData({ ...checkData, color: e.target.value });
           }}
         />
         <input
@@ -102,21 +114,21 @@ function CheckboxArr({ docs }) {
           name="green"
           id="green"
           checked={green}
-          value={"green"}
+          value={"#00e674"}
           onInput={(e) => loopKeys(e)}
           onChange={(e) => {
-            setcheckData({ ...checkData, color: e.target.name });
+            setcheckData({ ...checkData, color: e.target.value });
           }}
         />
         <input
           type="checkbox"
-          name="purple"
+          name="red"
           id="purple"
-          checked={purple}
-          value={"purple"}
+          checked={red}
+          value="#E74C3C"
           onInput={(e) => loopKeys(e)}
           onChange={(e) => {
-            setcheckData({ ...checkData, color: e.target.name });
+            setcheckData({ ...checkData, color: e.target.value });
           }}
         />
       </div>
@@ -124,11 +136,13 @@ function CheckboxArr({ docs }) {
         {checkData.docs.map((item, index) => (
           <label htmlFor={item.docName} key={Math.random()}>
             <Checkbox
+              type="checkbox"
               name={item.docName}
               checked={item.chk}
               value={item.chk.toString()}
               onChange={(e) => handleChange(e)}
             />
+
             {item.docName}
           </label>
         ))}

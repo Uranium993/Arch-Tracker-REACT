@@ -11,6 +11,7 @@ const Navbar = ({ adminExists, editorTokenAuth }) => {
       <li>
         <Link to="/user/register">Register</Link>
       </li>
+
       <li>
         <Link to="/login">Login</Link>
       </li>
@@ -33,11 +34,11 @@ const Navbar = ({ adminExists, editorTokenAuth }) => {
           ) : !editorTokenAuth && adminExists ? (
             guestLinks
           ) : (
-            <AppBar />
           )} */}
 
           {!adminExists ? registerAdmin : null}
           {adminExists && !editorTokenAuth ? guestLinks : null}
+          {editorTokenAuth ? <AppBar /> : null}
         </Fragment>
       </nav>
     </div>

@@ -25,21 +25,6 @@ code {
   margin: 16px 0 16px 24px;
 }
 
-.site-layout-background {
-  background: #3f4b5d;
-}
-
-.header {
-  margin-top: 4rem;
-  /* background-color: "#121212"; */
-}
-
 .ant-tabs {
   font-weight: bold;
 }
-
-/* .makeStyles-root-415 {
-  display: flex;
-  flex-direction: column;
-  align-content: center;
-} */

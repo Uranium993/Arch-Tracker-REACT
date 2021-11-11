@@ -1,13 +1,14 @@
 /* Forms */
 
+/* 
 .form-group {
-  margin: 1.2rem 0;
+  margin: 0px;
 }
 
 .form .form-text {
   display: block;
   margin-top: 0.3rem;
-  /* color: #888; */
+ 
   color: rgb(255, 255, 255);
 }
 
@@ -18,10 +19,11 @@
 .form select,
 .form textarea {
   display: block;
-  width: 300px;
-  padding: 0.2rem;
-  font-size: 1rem;
+  height: 2rem;
+  
+  padding: 0;
   border: 1px solid #ccc;
+  color: gray;
 }
 
 .form input[type="submit"],
@@ -45,6 +47,9 @@ button {
   width: 100%;
 }
 
-.btn:hover {
-  opacity: 0.6;
-}
+
+
+.edit_form {
+  margin: 10px 0;
+  padding: 0;
+} */

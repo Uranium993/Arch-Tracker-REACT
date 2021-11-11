@@ -1,6 +1,5 @@
 import api from "../utils/api";
-import setAuthToken from "../utils/setAuthToken";
-import { useMutation } from "react-query";
+import { setAuthToken } from "../utils/setAuthToken";
 
 export const loadUser = async () => {};
 
@@ -17,6 +16,8 @@ export const registerEditor = async (data) => {
 
   try {
     const res = await api.post("/users", body);
+
+    return res;
   } catch (err) {
     console.log(err);
   }
@@ -34,10 +35,12 @@ export const login = async ({ email, password }) => {
   try {
     const res = await api.post("/auth", body);
 
-    setAuthToken(res.data.token);
-  } catch (err) {
-    const error = err.response.statusText;
+    setAuthToken(res.data.resData.token, res.data.resData.userName);
 
-    console.log(error);
+    return {};
+  } catch (err) {
+    const error = err.response.data.errors[0];
+
+    return error;
   }
 };

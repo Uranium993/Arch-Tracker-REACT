@@ -1,12 +1,9 @@
 import React from "react";
 import { makeStyles } from "@material-ui/core/styles";
-// import Accordion from "@material-ui/core/Accordion";
-// import AccordionSummary from "@material-ui/core/AccordionSummary";
-// import AccordionDetails from "@material-ui/core/AccordionDetails";
-// import Typography from "@material-ui/core/Typography";
-// import ExpandMoreIcon from "@material-ui/icons/ExpandMore";
 import Phase from "./Phase";
 import Grid from "@material-ui/core/Grid";
+import { useQuery } from "react-query";
+import { getSingleProject } from "../../actions/queryProjects";
 
 const useStyles = makeStyles((theme) => ({
   root: {
@@ -16,11 +13,14 @@ const useStyles = makeStyles((theme) => ({
   },
 
   singleItem: {
-    [theme.breakpoints.down("lg")]: {
-      width: "100%",
-    },
     [theme.breakpoints.up("lg")]: {
       width: "11rem",
+    },
+    // [theme.breakpoints.down("lg")]: {
+    //   width: "11rem",
+    // },
+    [theme.breakpoints.down("md")]: {
+      width: "100%",
     },
   },
   heading: {
@@ -29,8 +29,21 @@ const useStyles = makeStyles((theme) => ({
   },
 }));
 
-const Phases = ({ phases }) => {
+const Phases = ({ projectID }) => {
   const classes = useStyles();
+
+  const projectQuery = useQuery(
+    ["project", projectID],
+    async () => await getSingleProject(projectID),
+    {
+      retry: 0,
+      refetchOnWindowFocus: false,
+      onSuccess: () => {},
+    }
+  );
+
+  console.log();
+
   return (
     <Grid
       wrap="wrap"
@@ -41,9 +54,9 @@ const Phases = ({ phases }) => {
       //   flexDirection: "",
       // }}
     >
-      {phases.map((phase) => (
-        <Grid key={phase.name} className={classes.singleItem} item>
-          <Phase className={classes.item} key={phase.name} phase={phase} />
+      {projectQuery?.data?.map((phase) => (
+        <Grid key={phase._id} className={classes.singleItem} item>
+          <Phase className={classes.item} phase={phase} projectID={projectID} />
         </Grid>
       ))}
     </Grid>

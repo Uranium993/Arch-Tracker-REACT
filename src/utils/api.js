@@ -1,9 +1,12 @@
 import axios from "axios";
 
+const token = localStorage.getItem("token");
+
 const api = axios.create({
   baseURL: "http://localhost:8080/api",
   headers: {
     "Content-type": "application/json",
+    "x-auth-token": token,
   },
 });
 /**
@@ -19,7 +22,7 @@ api.interceptors.response.use(
   (err) => {
     if (err.response.status === 401) {
       console.log("should logout");
-      //   store.dispatch({ type: LOGOUT });
+      // localStorage.removeItem("token");
     }
     return Promise.reject(err);
   }
