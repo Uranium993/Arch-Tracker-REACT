@@ -1,7 +1,8 @@
 import axios from "axios";
 
-const token = localStorage.getItem("token");
-
+const token = localStorage.getItem("editorToken")
+  ? localStorage.getItem("editorToken")
+  : localStorage.getItem("adminToken");
 const api = axios.create({
   baseURL: "http://localhost:8080/api",
   headers: {
@@ -17,15 +18,15 @@ const api = axios.create({
  logout the user if the token has expired
 **/
 
-api.interceptors.response.use(
-  (res) => res,
-  (err) => {
-    if (err.response.status === 401) {
-      console.log("should logout");
-      // localStorage.removeItem("token");
-    }
-    return Promise.reject(err);
-  }
-);
+// api.interceptors.response.use(
+//   (res) => res,
+//   (err) => {
+//     if (err.response.status === 401) {
+//       console.log("should logout");
+//       localStorage.removeItem("token");
+//     }
+//     return Promise.reject(err);
+//   }
+// );
 
 export default api;

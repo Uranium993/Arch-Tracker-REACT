@@ -7,26 +7,28 @@ import { Typography } from "@material-ui/core";
 function AddProjectForm(props) {
   const queryClient = useQueryClient();
 
-  const showEdit = props.showEdit ? true : false;
+  const { showEdit } = props;
 
   const { register, handleSubmit, reset } = useForm();
 
   const mutation = useMutation(
     (data) => {
       if (showEdit) {
-        editProjectInfo(data, props.projectID);
+        return editProjectInfo(data, props.projectID);
       } else {
-        addProject(data);
+        return addProject(data);
       }
     },
     {
       onSuccess: () => {
         if (showEdit) {
+          console.log(showEdit);
+          queryClient.invalidateQueries(["project", props.projectID]);
         } else {
           props.close();
+
           return queryClient.invalidateQueries("projects");
         }
-        return queryClient.invalidateQueries("projects");
       },
     }
   );

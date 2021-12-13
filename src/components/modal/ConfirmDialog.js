@@ -29,7 +29,7 @@ function ConfirmDialog(props) {
           danger
           onClick={() => {
             confirm.onConfirm();
-            return setConfirm({
+             setConfirm({
               ...confirm,
               isOpen: false,
             });

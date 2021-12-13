@@ -12,6 +12,12 @@ export const useStyles = makeStyles((theme) => ({
     [theme.breakpoints.down("sm")]: {
       flexWrap: "wrap",
     },
+    // "&:nth-child(odd)": {
+    //   "&MuiAccordionSummary-root": {
+    //     backgroundColor: "#2d404d",
+    //     padding: "0.5rem 0",
+    //   },
+    // },
   },
   codeName: {
     fontWeight: "200",
@@ -32,6 +38,7 @@ export const useStyles = makeStyles((theme) => ({
   },
   firstColumn: {
     backgroundColor: "rgb(28, 28, 28)",
+
     color: "rgb(115, 249, 188)",
     borderRight: "1px solid rgb(115, 249, 188)",
     fontWeight: "200",

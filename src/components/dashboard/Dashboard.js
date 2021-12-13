@@ -1,17 +1,17 @@
 import React, { useState } from "react";
 import ProjectContainer from "./ProjectContainer";
-import "antd/dist/antd.css";
-import "../../index.css";
 import { Layout, Menu } from "antd";
 import { LaptopOutlined } from "@ant-design/icons";
 import { Tabs } from "antd";
 import Page from "./Charts";
 import Modal from "../modal/Modal";
-import "./ant.module.css";
 import AddProjectBtn from "../Buttons&checks/AddProjectBtn";
-import { useQuery } from "react-query";
-import { getProjects } from "../../actions/queryProjects";
+import { useProjects, useArchivedProjects } from "../../actions/useQueryHook";
 
+//CSSS
+import "./ant.module.css";
+import "antd/dist/antd.css";
+import "../../index.css";
 const { TabPane } = Tabs;
 
 const { SubMenu } = Menu;
@@ -19,18 +19,22 @@ const { Header, Content, Sider } = Layout;
 
 const Dashboard = () => {
   //Fetch projects (axios)
-  const queryInfo = useQuery("projects", async () => await getProjects(), {
-    refetchOnWindowFocus: false,
-  });
-
+  const [menuKey, setMenuKey] = useState("active");
   const [searchTerm, setSearchTerm] = useState("");
-
   const [showModal, setShowModal] = useState(false);
   const openModal = () => {
     setShowModal((prev) => !prev);
   };
 
-  const [menuKey, setMenuKey] = useState(Number);
+  const queryInfo = useProjects();
+
+  const queryInfoArchived = useArchivedProjects(menuKey);
+
+  const yearArray = [2019, 2020, 2021, "active"].reverse();
+
+  // //const yearArray = new Set();
+
+  // yearArray.add(new Date().getFullYear());
 
   return (
     <>
@@ -57,7 +61,7 @@ const Dashboard = () => {
                       <Menu
                         onSelect={(e) => setMenuKey(e.key)}
                         mode="inline"
-                        defaultSelectedKeys={["1"]}
+                        defaultSelectedKeys={["active"]}
                         style={{ height: "100%", borderRight: 0 }}
                         theme="dark"
                       >
@@ -66,10 +70,9 @@ const Dashboard = () => {
                           icon={<LaptopOutlined />}
                           title="Database"
                         >
-                          <Menu.Item key="1">2021</Menu.Item>
-                          <Menu.Item key="2">2020</Menu.Item>
-                          <Menu.Item key="3">2019</Menu.Item>
-                          <Menu.Item key="4">2018</Menu.Item>
+                          {yearArray.map((year) => {
+                            return <Menu.Item key={year}>{year}</Menu.Item>;
+                          })}
                         </SubMenu>
                       </Menu>
                     </Sider>
@@ -91,21 +94,56 @@ const Dashboard = () => {
                             }}
                           />
                         </div>
-
-                        {queryInfo.isLoading ? (
+                        {queryInfo.status === "error" ? (
+                          <h1 style={{ color: "red" }}>ERROR</h1>
+                        ) : queryInfo.isLoading ? (
                           "LOADING......"
-                        ) : queryInfo.isSuccess ? (
+                        ) : menuKey === "active" && queryInfo.isSuccess ? (
                           <ProjectContainer
-                            queryInfo={Array.from(queryInfo.data)}
+                            queryInfo={queryInfo?.data}
                             searchTerm={searchTerm}
                           />
+                        ) : menuKey !== "active" &&
+                          queryInfoArchived.isSuccess ? (
+                          // <ArchivedContainer
+                          // queryInfo={Array.from(queryInfoArchived?.data)}
+                          // searchTerm={searchTerm}
+                          // />
+
+                          queryInfoArchived?.data.map((project) => (
+                            <div
+                              key={project.codename}
+                              style={{ display: "flex" }}
+                            >
+                              <ul
+                                style={{
+                                  backgroundColor: "#1890ff",
+                                  display: "flex",
+                                  flexDirection: "column",
+                                  padding: "1rem",
+                                  margin: "1rem",
+                                  minWidth: "20rem",
+                                }}
+                              >
+                                <h3>Client Name: {project.clientName}</h3>
+                                <h3>Project Codename: {project.codename}</h3>
+                                <h4>Final Worth: {project.finalWorth}</h4>
+                              </ul>
+                            </div>
+                          ))
+                        ) : queryInfoArchived.isError ? (
+                          "error"
                         ) : null}
                       </Content>
                     </Layout>
                   </Layout>
                 </div>
               </TabPane>
-              <TabPane style={{ width: "100vw" }} tab="Charts" key="2">
+              <TabPane
+                style={{ width: "95vw", marginLeft: "3rem" }}
+                tab="Charts"
+                key="2"
+              >
                 <Page />
               </TabPane>
             </Tabs>

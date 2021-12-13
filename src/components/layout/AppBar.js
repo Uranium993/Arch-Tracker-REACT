@@ -5,8 +5,11 @@ function AppBar() {
   const { value, setValue } = useContext(UserContext);
 
   const logout = () => {
-    localStorage.removeItem("token");
+    localStorage.removeItem("editorToken");
     localStorage.removeItem("editorName");
+    localStorage.removeItem("adminToken");
+    localStorage.removeItem("adminName");
+
     setValue({ ...value, editor: false });
   };
   return (

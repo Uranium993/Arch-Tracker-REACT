@@ -1,16 +1,22 @@
-import React, { useState } from "react";
+import React, { useState, useEffect } from "react";
 import Accordion from "@material-ui/core/Accordion";
 import AccordionSummary from "@material-ui/core/AccordionSummary";
 import AccordionDetails from "@material-ui/core/AccordionDetails";
 import Grid from "@material-ui/core/Grid";
 import ExpandMoreIcon from "@material-ui/icons/ExpandMore";
 import styled from "styled-components";
-import { deleteProject, editProjectInfo } from "../../actions/queryProjects";
 import Button from "../Buttons&checks/Button";
-import { useMutation, useQueryClient } from "react-query";
 import ConfirmDialog from "../modal/ConfirmDialog";
 import AddProjectForm from "../auth&form/AddProjectForm";
+//Hooks
 import { useSpring, animated } from "react-spring";
+import { useMutation, useQueryClient, useQuery } from "react-query";
+//Actions
+import {
+  deleteProject,
+  editProjectInfo,
+  getSingleProject,
+} from "../../actions/queryProjects";
 
 const Icon = styled(ExpandMoreIcon)`
   color: white;
@@ -19,18 +25,10 @@ const Details = styled(AccordionDetails)`
   display: block;
 `;
 
-//-----------------------Function Component Init----------------------------------
+//-----------------------Function Component Init----------------------------------//
 
-const FirstColumn = ({
-  clientMail,
-  clientName,
-  clientNumber,
-  estimatedWorth,
-  finalWorth,
-  className,
-  projectID,
-}) => {
-  const queryClinet = useQueryClient();
+const FirstColumn = ({ clientName, className, projectID }) => {
+  const queryClient = useQueryClient();
 
   const [expanded, setExpanded] = useState(false);
   const [showEditForm, setshowEditForm] = useState(false);
@@ -38,7 +36,14 @@ const FirstColumn = ({
     isOpen: false,
     title: "",
     subtitle: "",
+    inactive: Boolean,
   });
+
+  useEffect(() => {
+    if (showEditForm === true && expanded === false) {
+      setshowEditForm(false);
+    }
+  }, [expanded, showEditForm]);
 
   const openModal = () => {
     setshowEditForm((prev) => !prev);
@@ -48,38 +53,40 @@ const FirstColumn = ({
     setExpanded(isExpanded ? panel : false);
   };
 
-  const mutation = useMutation(
-    (e) => {
-      if (e.target.name === "delete") {
-        setConfirm({
-          isOpen: true,
-          title: "Are you sure you want to DELETE project?",
-          subtitle: "This cannot be undone!",
-          onConfirm: () => {
-            deleteProject(projectID);
-          },
-        });
-      } else if (e.target.name === "archive") {
-        setConfirm({
-          isOpen: true,
-          title: "Are you sure you want to archive this project?",
-          subtitle: "You can pull it back grom archive",
-          onConfirm: () => {
-            editProjectInfo(projectID);
-          },
-        });
-      } else {
-        console.log("edit");
-      }
-    },
+  //---------------------Get single project---------------------------//
+
+  const project = useQuery(
+    ["project", projectID],
+    () => getSingleProject(projectID),
     {
-      onSuccess: () => queryClinet.invalidateQueries("projects"),
+      retry: 0,
+      staleTime: 5000 * 60,
     }
   );
 
-  const handleButtons = (e) => {
-    mutation.mutate(e);
-  };
+  //-------------------------mutations---------------------------------//
+
+  const deleteMutation = useMutation(
+    () => {
+      return deleteProject(projectID);
+    },
+    {
+      onSuccess: (data) => {
+        queryClient.invalidateQueries("projects");
+      },
+    }
+  );
+
+  const arhiveMutation = useMutation(
+    (data) => {
+      editProjectInfo(data, projectID);
+    },
+    {
+      onSuccess: () => queryClient.invalidateQueries("projects"),
+    }
+  );
+
+  //----------------------Animation--------------------------------//
 
   const animation = useSpring({
     config: {
@@ -112,7 +119,9 @@ const FirstColumn = ({
               marginBottom: "1rem",
             }}
           >
-            email: {clientMail}
+            {" "}
+            <span style={{ color: "rgb(24, 144, 255)" }}>Email:</span>{" "}
+            {project.isSuccess ? project.data[0].clientMail : null}
             <br />
           </div>
           <div
@@ -122,7 +131,8 @@ const FirstColumn = ({
               marginBottom: "1rem",
             }}
           >
-            Phone: {clientNumber}
+            <span style={{ color: "rgb(24, 144, 255)" }}>Phone:</span>{" "}
+            {project.isSuccess ? project.data[0].clientNumber : null}
           </div>
           <div
             style={{
@@ -131,11 +141,11 @@ const FirstColumn = ({
               marginBottom: "1rem",
             }}
           >
-            Estimated $:{" "}
+            <span style={{ color: "rgb(24, 144, 255)" }}>Estimated $:</span>{" "}
             <div
               style={{ display: "inline", width: "100%", margin: "auto" }}
             ></div>{" "}
-            {estimatedWorth}
+            {project.isSuccess ? project.data[0].estimatedWorth : null}
           </div>
           <div
             style={{
@@ -144,7 +154,8 @@ const FirstColumn = ({
               marginBottom: "1rem",
             }}
           >
-            Final $: {finalWorth}
+            <span style={{ color: "rgb(24, 144, 255)" }}>Final $:</span>{" "}
+            {project.isSuccess ? project.data[0].finalWorth : null}
           </div>
           <div
             style={{
@@ -185,7 +196,16 @@ const FirstColumn = ({
                 </animated.div>
               ) : null}
               <Button
-                onClick={(e) => mutation.mutate(e, projectID)}
+                onClick={(e) => {
+                  setConfirm({
+                    isOpen: true,
+                    title: "Are you sure you want to archive this project?",
+                    subtitle: "You can pull it back from archive",
+                    onConfirm: (inactive = { inactive: true }) => {
+                      arhiveMutation.mutate(inactive);
+                    },
+                  });
+                }}
                 name="archive"
                 type="rounded-outline"
                 style={{
@@ -200,11 +220,24 @@ const FirstColumn = ({
                 Archive
               </Button>
               <Button
-                style={{ width: "80%", height: "2rem", fontSize: "1.2em" }}
+                style={{
+                  width: "80%",
+                  height: "2rem",
+                  fontSize: "clamp(5px, 1em, 1.5em",
+                }}
                 name="delete"
                 btnColor="#e74c3c"
                 type="rounded-outline"
-                onClick={(e) => handleButtons(e, projectID)}
+                onClick={() => {
+                  setConfirm({
+                    isOpen: true,
+                    title: "Are you sure you want to DELETE project?",
+                    subtitle: "This cannot be undone!",
+                    onConfirm: () => {
+                      deleteMutation.mutate();
+                    },
+                  });
+                }}
               >
                 Delete Project
               </Button>
