@@ -58,7 +58,7 @@ function CheckboxArr({ docs, id, projectID, name }) {
 
   const mutation = useMutation((data) => updatePhase(data, projectID, id), {
     onSuccess: async (data, values) => {
-      queryClient.setQueryData(["project", projectID], data);
+      queryClient.setQueryData(["projectPhases", projectID], data);
       // queryClient.invalidateQueries(["project", projectID]);
     },
   });

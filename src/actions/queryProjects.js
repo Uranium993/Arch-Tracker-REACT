@@ -14,7 +14,27 @@ export const addProject = async (data) => {
 
 export const getProjects = async () => {
   try {
-    const res = await api.get("/projects");
+    const res = await api.get(`/projects`);
+
+    return res.data;
+  } catch (err) {
+    console.log(err);
+  }
+};
+
+export const getArchivedProjects = async (menuKey) => {
+  try {
+    const res = await api.get(`/projects/archived/${menuKey}`);
+
+    return res.data;
+  } catch (err) {
+    console.log(err);
+  }
+};
+
+export const getSingleProject = async (id) => {
+  try {
+    const res = await api.get(`/projects/${id}`);
 
     return res.data;
   } catch (err) {
@@ -22,9 +42,9 @@ export const getProjects = async () => {
   }
 };
 
-export const getSingleProject = async (id) => {
+export const getSingleProjectPhase = async (id) => {
   try {
-    const res = await api.get(`/projects/${id}`);
+    const res = await api.get(`/projects/phase/${id}`);
 
     return res.data[0].phases;
   } catch (err) {
@@ -46,7 +66,7 @@ export const updatePhase = async (data, projectID, phaseID) => {
   try {
     const res = await api.patch(`/projects/${projectID}/${phaseID}`, data);
 
-    console.log(res.data);
+    return res.data;
   } catch (err) {
     console.log(err.response);
   }
@@ -54,9 +74,7 @@ export const updatePhase = async (data, projectID, phaseID) => {
 
 export const archiveProject = async (id) => {
   try {
-    const res = await api.patch(`/projects/${id}`);
-
-    console.log(res.data);
+    await api.patch(`/projects/${id}`);
   } catch (err) {
     console.log(err.response);
   }
@@ -66,7 +84,7 @@ export const deleteProject = async (id) => {
   try {
     const res = await api.delete(`/projects/${id}`);
 
-    console.log(res.data);
+    return res.data;
   } catch (err) {
     console.log(err.response);
   }

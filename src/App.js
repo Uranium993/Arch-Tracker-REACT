@@ -14,33 +14,43 @@ import {
 } from "react-router-dom";
 import { QueryClient, QueryClientProvider } from "react-query";
 import Fails from "./components/auth&form/Fails";
-import { checkAdmin } from "./utils/setAuthToken";
 import { UserContext } from "./actions/UserContext";
 import { ReactQueryDevtools } from "react-query/devtools";
 
 const queryClient = new QueryClient();
 
-const initialState = {
-  admin: false,
-  editor: Boolean,
-  userName: localStorage.getItem("editorName"),
-  error: Object,
-};
+const adminCheck = true;
 
 function App() {
-  const [value, setValue] = useState(initialState);
+  let username;
+
+  if (localStorage.getItem("adminName")) {
+    username = localStorage.getItem("adminName");
+  } else {
+    username = localStorage.getItem("editorName");
+  }
+
+  const [value, setValue] = useState({
+    admin: Boolean,
+    editor: Boolean,
+    userName: username,
+    error: Object,
+  });
+
+  const editorTokenAuth = !!localStorage.getItem("editorToken");
+  const adminTokenAuth = !!localStorage.getItem("adminToken");
 
   //checks if admin exists and editor token
-  const adminExists = !!checkAdmin();
-  const editorTokenAuth = !!localStorage.getItem("token");
+
   return (
     <QueryClientProvider client={queryClient}>
       <UserContext.Provider value={{ value, setValue }}>
         <Router>
           <Fragment>
             <Navbar
-              adminExists={adminExists}
+              adminExists={adminCheck}
               editorTokenAuth={editorTokenAuth}
+              adminTokenAuth={adminTokenAuth}
             />
 
             <Route
@@ -48,7 +58,7 @@ function App() {
               exact
               render={() => (
                 <Landing
-                  adminExists={adminExists}
+                  adminExists={adminCheck}
                   editorTokenAuth={editorTokenAuth}
                 />
               )}
@@ -60,10 +70,10 @@ function App() {
                   path="/admin/register"
                   exact
                   render={() => {
-                    return adminExists ? (
-                      <Fails adminExists={adminExists} />
+                    return adminCheck ? (
+                      <Fails adminExists={adminCheck} />
                     ) : (
-                      <Register role={adminExists ? "editor" : "admin"} />
+                      <Register role={adminCheck ? "editor" : "admin"} />
                     );
                   }}
                 />
@@ -80,12 +90,19 @@ function App() {
                 />
                 <Route
                   path="/login"
-                  auth={adminExists}
-                  render={() => <Login token={editorTokenAuth} />}
+                  auth={adminCheck}
+                  render={() => (
+                    <Login
+                      token={editorTokenAuth}
+                      adminToken={adminTokenAuth}
+                      //error={value.error}
+                    />
+                  )}
                 />
+
                 <PrivateRoute
                   path="/dashboard"
-                  auth={editorTokenAuth}
+                  auth={editorTokenAuth || adminTokenAuth}
                   exact
                   component={Dashboard}
                 />

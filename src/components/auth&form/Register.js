@@ -19,6 +19,7 @@ const Register = ({ isAuthenticated, role }) => {
     } else {
       await mutation.mutate(data);
     }
+
     reset();
   };
 
@@ -27,7 +28,10 @@ const Register = ({ isAuthenticated, role }) => {
   }
 
   return (
-    <div className="form-container">
+    <div
+      style={{ backgroundColor: "#56c8c8", padding: "1rem" }}
+      className="form-container"
+    >
       <h1 className="large text-primary">Sign Up</h1>
       <p className="lead">
         <i className="fas fa-user"></i> Create Your Account

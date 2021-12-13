@@ -4,31 +4,46 @@ import { login } from "../../actions/auth";
 import { useForm } from "react-hook-form";
 import { UserContext } from "../../actions/UserContext";
 
-const Login = ({ token }) => {
+const Login = (props) => {
   const { register, handleSubmit, reset } = useForm();
-
   const { value, setValue } = useContext(UserContext);
+  // const [state, setState] = useState({
+  //   error: Boolean,
+  // });
 
   const onSubmit = async (data) => {
-    let response = await login(data);
+    try {
+      let response = await login(data);
 
-    await setValue({ ...value, editor: true, error: response.msg });
+      await setValue({
+        ...value,
+        error: response || false,
+        admin: response.resData?.role === "admin",
+        editor: response.resData?.role === "editor",
+      });
+    } catch (err) {
+      console.log(err);
+    }
 
     reset();
   };
 
+  setTimeout(() => {
+    setValue({ ...value, error: false });
+  }, 4000);
+
   //Redirect if logged in
-  if (token === true) {
+  if (props.adminToken || props.token) {
     return <Redirect to="/dashboard" />;
   }
 
   return (
-    <div className="container2">
+    <div style={{ backgroundColor: "#56c8c8", padding: "1rem" }}>
       {value.error ? (
         <h3 style={{ color: "red" }}>Invalid Credentials</h3>
       ) : null}
 
-      <h1 className="large text-primary">Sign In</h1>
+      <h1>Sign In</h1>
       <p className="lead">
         <i className="fas fa-user"></i> Sign Into Your Account
       </p>
@@ -51,10 +66,18 @@ const Login = ({ token }) => {
           />
         </div>
 
-        <input type="submit" className="btn btn-primary" value="Login" />
+        <input
+          type="submit"
+          style={{ color: "white" }}
+          className="btn"
+          value="Login"
+        />
       </form>
-      <p className="my-1">
-        Don't have an account <Link to="/register">Sign Up</Link>
+      <p>
+        Don't have an account{" "}
+        <Link style={{ color: "blue" }} to="/register">
+          Sign Up
+        </Link>
       </p>
     </div>
   );

@@ -3,7 +3,8 @@ import { Fragment } from "react";
 import { Link } from "react-router-dom";
 import AppBar from "./AppBar";
 
-const Navbar = ({ adminExists, editorTokenAuth }) => {
+import ScraperForm from "../auth&form/ScraperForm";
+const Navbar = ({ adminExists, editorTokenAuth, adminTokenAuth }) => {
   //Test variables
 
   const guestLinks = (
@@ -35,10 +36,10 @@ const Navbar = ({ adminExists, editorTokenAuth }) => {
             guestLinks
           ) : (
           )} */}
-
+          <ScraperForm />
           {!adminExists ? registerAdmin : null}
-          {adminExists && !editorTokenAuth ? guestLinks : null}
-          {editorTokenAuth ? <AppBar /> : null}
+          {!adminTokenAuth && !editorTokenAuth ? guestLinks : null}
+          {editorTokenAuth || adminTokenAuth ? <AppBar /> : null}
         </Fragment>
       </nav>
     </div>

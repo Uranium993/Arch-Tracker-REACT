@@ -12,7 +12,7 @@ const Background = styled.div`
   background: rgba(0, 0, 0, 0.8);
   display: flex;
   justify-content: center;
-  align-items: center;
+  align-items: start;
   z-index: 5;
 `;
 

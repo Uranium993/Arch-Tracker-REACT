@@ -7,9 +7,17 @@ import FirstColumn from "./FirstColumn";
 const ProjectContainer = ({ searchTerm, queryInfo }) => {
   const classes = useStyles();
 
+  // const project = useQuery(
+  //   ["project", queryInfo._id],
+  //   () => getSingleProject(queryInfo._id),
+  //   {
+  //     onSuccess: (data) => console.log(data),
+  //   }
+  // );
+
   return (
     <div className={classes.root}>
-      {queryInfo
+      {Array.from(queryInfo)
         .filter((val) => {
           if (searchTerm === "") {
             return val;
@@ -17,9 +25,8 @@ const ProjectContainer = ({ searchTerm, queryInfo }) => {
             val.clientName
               .toLocaleLowerCase()
               .includes(searchTerm.toLowerCase())
-          ) {
+          )
             return val;
-          }
         })
         .map(
           ({
