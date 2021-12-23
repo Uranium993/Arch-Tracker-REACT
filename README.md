@@ -1,4 +1,22 @@
-# Getting Started with Create React App
+# This is my personal portfolio project
+
+It's work in progress, but enough to show some of my skills,
+it features
+- react hooks, 
+- actions (like data fetching)
+- 'global' state (react-query, which actually display's server state)
+- forms, charts, registrations, logins...
+
+## backend code for this app is this:
+https://github.com/Uranium993/Project-Tracker-SERVER
+
+### This simple app solves the problem of project tracktion for architecture buro's in Serbia. (google sheets-like, but with some advanced features)
+### It is architecture specific. Could probably be adjusted for big construction companies.
+
+<br>
+<br>
+
+## Getting Started with Create React App
 
 This project was bootstrapped with [Create React App](https://github.com/facebook/create-react-app).
 
