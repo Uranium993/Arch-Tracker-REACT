@@ -11,6 +11,7 @@ it features
 https://github.com/Uranium993/Project-Tracker-SERVER
 
 ### This simple app solves the problem of project tracktion for architecture buro's in Serbia. (google sheets-like, but with some advanced features)
+<br>
 ### It is architecture specific. Could probably be adjusted for big construction companies.
 
 <br>
